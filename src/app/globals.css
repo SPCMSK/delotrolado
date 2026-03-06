@@ -211,3 +211,195 @@ button:hover {
 .admin-btn-danger:hover:not(:disabled) {
   background: #b91c1c;
 }
+
+/* ══════════════════════════════════
+   RESPONSIVE — Mobile overrides
+   Zero contamination: everything
+   lives here, desktop code untouched.
+   ══════════════════════════════════ */
+
+/* ── Page sections: reduce padding ── */
+@media (max-width: 768px) {
+  .page-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .page-section-top {
+    padding-top: 32px !important;
+  }
+}
+
+/* ── Two-column → stacked ── */
+@media (max-width: 768px) {
+  .two-col {
+    flex-direction: column !important;
+    gap: 40px !important;
+  }
+  .two-col > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── Home: Cartelera grid → single column ── */
+@media (max-width: 768px) {
+  .home-cartelera {
+    padding: 48px 20px !important;
+  }
+  .home-cartelera-header {
+    margin-bottom: 32px !important;
+  }
+  .home-events-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2px !important;
+  }
+}
+
+/* ── Events list: 3-col grid → stack ── */
+@media (max-width: 768px) {
+  .event-row {
+    grid-template-columns: 80px 1fr !important;
+    gap: 16px !important;
+    padding: 24px 0 !important;
+  }
+  .event-row-arrow {
+    display: none !important;
+  }
+  .event-meta {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .event-meta-sep {
+    display: none !important;
+  }
+}
+
+/* ── Event detail: info strip wraps ── */
+@media (max-width: 768px) {
+  .event-hero {
+    height: 280px !important;
+  }
+  .event-hero-title {
+    padding: 0 20px 32px !important;
+  }
+  .event-detail-content {
+    flex-direction: column !important;
+    gap: 40px !important;
+    padding: 40px 20px 0 !important;
+  }
+  .event-detail-content > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+  .event-info-strip {
+    flex-wrap: wrap !important;
+    gap: 24px !important;
+  }
+  .event-back-link {
+    padding: 40px 20px 0 !important;
+  }
+  .ticket-module {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* ── Artists grid: 4 cols → 2 cols ── */
+@media (max-width: 768px) {
+  .artists-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 480px) {
+  .artists-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Artist detail: 2-col → stack ── */
+@media (max-width: 768px) {
+  .artist-detail-layout {
+    flex-direction: column !important;
+    gap: 40px !important;
+  }
+  .artist-detail-layout > * {
+    flex: 1 1 100% !important;
+  }
+  .artist-photo {
+    aspect-ratio: 1 !important;
+    max-height: 400px !important;
+  }
+  .artist-links {
+    flex-wrap: wrap !important;
+  }
+}
+
+/* ── Gallery: 3 columns → 2 → 1 ── */
+@media (max-width: 768px) {
+  .gallery-grid {
+    columns: 2 !important;
+  }
+}
+@media (max-width: 480px) {
+  .gallery-grid {
+    columns: 1 !important;
+  }
+}
+
+/* ── Info page: 2-col → stack ── */
+@media (max-width: 768px) {
+  .info-layout {
+    flex-direction: column !important;
+    gap: 48px !important;
+  }
+  .info-layout > * {
+    flex: 1 1 100% !important;
+  }
+}
+
+/* ── Footer responsive ── */
+@media (max-width: 768px) {
+  .footer-content {
+    padding: 48px 20px !important;
+  }
+  .footer-grid {
+    flex-direction: column !important;
+    gap: 40px !important;
+  }
+  .footer-grid > * {
+    flex: 1 1 100% !important;
+  }
+  .footer-bottom {
+    padding: 20px 20px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+}
+
+/* ── Filter tabs: scroll horizontally on mobile ── */
+@media (max-width: 768px) {
+  .filter-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    gap: 16px !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-tabs > button {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ── Lineup entry: stack on tiny screens ── */
+@media (max-width: 480px) {
+  .lineup-entry {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+}

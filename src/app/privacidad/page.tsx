@@ -33,7 +33,7 @@ const sections = [
 
 export default function PrivacidadPage() {
   return (
-    <section style={{ padding: "48px 64px 96px", maxWidth: "800px" }}>
+    <section className="page-section page-section-top" style={{ padding: "48px 64px 96px", maxWidth: "800px" }}>
       {/* Header */}
       <div className="animate-fade-in" style={{ marginBottom: "64px" }}>
         <p

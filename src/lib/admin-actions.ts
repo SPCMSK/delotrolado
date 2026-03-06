@@ -391,6 +391,8 @@ export interface SiteSettingsInput {
   hero_subtitle?: string | null;
   hero_cta_text?: string | null;
   hero_cta_link?: string | null;
+  hero_bg_url?: string | null;
+  hero_bg_type?: string | null;
   footer_text?: string | null;
   ethos_text?: string | null;
   min_age_default?: number | null;

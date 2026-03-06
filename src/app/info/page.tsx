@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function InfoPage() {
   return (
-    <section style={{ padding: "48px 64px 96px" }}>
+    <section className="page-section page-section-top" style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
       <div className="animate-fade-in" style={{ marginBottom: "80px" }}>
         <p
@@ -38,7 +38,7 @@ export default function InfoPage() {
 
       {/* Two-column layout */}
       <div
-        className="animate-fade-in-delayed"
+        className="animate-fade-in-delayed info-layout"
         style={{ display: "flex", gap: "96px" }}
       >
         {/* Left column — About */}

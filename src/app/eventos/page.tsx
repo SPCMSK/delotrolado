@@ -12,7 +12,7 @@ export default async function EventosPage() {
   const past: typeof upcoming = [];
 
   return (
-    <section style={{ padding: "48px 64px 96px" }}>
+    <section className="page-section page-section-top" style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
       <div className="animate-fade-in" style={{ marginBottom: "64px" }}>
         <p
@@ -41,7 +41,7 @@ export default async function EventosPage() {
 
       {/* Filter tabs */}
       <div
-        className="animate-fade-in-delayed"
+        className="animate-fade-in-delayed filter-tabs"
         style={{
           display: "flex",
           gap: "32px",
@@ -87,7 +87,7 @@ export default async function EventosPage() {
           <Link
             key={event.slug}
             href={`/eventos/${event.slug}`}
-            className="group"
+            className="group event-row"
             style={{
               display: "grid",
               gridTemplateColumns: "100px 1fr auto",
@@ -155,7 +155,7 @@ export default async function EventosPage() {
               >
                 {event.name}
               </h3>
-              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <div className="event-meta" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                 <span
                   style={{
                     fontSize: "14px",
@@ -165,6 +165,7 @@ export default async function EventosPage() {
                   {event.venue}
                 </span>
                 <span
+                  className="event-meta-sep"
                   style={{
                     fontSize: "14px",
                     color: "rgba(255,255,255,0.2)",
@@ -181,6 +182,7 @@ export default async function EventosPage() {
                   {event.city}
                 </span>
                 <span
+                  className="event-meta-sep"
                   style={{
                     fontSize: "14px",
                     color: "rgba(255,255,255,0.2)",
@@ -218,7 +220,7 @@ export default async function EventosPage() {
 
             {/* Arrow */}
             <span
-              className="group-hover:translate-x-1 transition-transform duration-300"
+              className="group-hover:translate-x-1 transition-transform duration-300 event-row-arrow"
               style={{
                 fontSize: "20px",
                 color: "rgba(255,255,255,0.2)",

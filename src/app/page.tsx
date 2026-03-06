@@ -1,16 +1,58 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getPublishedEvents } from "@/lib/data";
+import { getPublishedEvents, getSiteSettings } from "@/lib/data";
 
 export default async function Home() {
-  const events = await getPublishedEvents();
+  const [events, settings] = await Promise.all([
+    getPublishedEvents(),
+    getSiteSettings(),
+  ]);
   const upcoming = events.slice(0, 3);
 
   return (
     <>
       {/* ── HERO ── full viewport height */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden -mt-20 lg:-mt-24">
-        <div className="absolute inset-0 bg-black" />
+        {/* Hero background — admin-controlled image, video, or solid black */}
+        {settings?.hero_bg_url && settings.hero_bg_type === "video" ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          >
+            <source src={settings.hero_bg_url} />
+          </video>
+        ) : settings?.hero_bg_url ? (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url(${settings.hero_bg_url})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-black" />
+        )}
+        {/* Dark overlay for readability */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: settings?.hero_bg_url
+              ? "rgba(0,0,0,0.55)"
+              : "transparent",
+          }}
+        />
 
         <div className="relative z-10 flex flex-col items-center text-center px-6 w-full">
           {/* ── Logo central ── */}
@@ -55,8 +97,8 @@ export default async function Home() {
       </section>
 
       {/* ── CARTELERA ── */}
-      <section style={{ padding: '96px 64px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '56px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '24px' }}>
+      <section className="home-cartelera" style={{ padding: '96px 64px' }}>
+        <div className="home-cartelera-header" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '56px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '24px' }}>
           <h2 style={{ fontSize: 'clamp(24px, 3vw, 36px)', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.8)', fontWeight: 700 }}>
             Cartelera
           </h2>
@@ -70,7 +112,7 @@ export default async function Home() {
         </div>
 
         {upcoming.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(upcoming.length, 3)}, 1fr)`, gap: '2px' }}>
+          <div className="home-events-grid" style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(upcoming.length, 3)}, 1fr)`, gap: '2px' }}>
           {upcoming.map((event, i) => (
             <Link
               key={event.slug}

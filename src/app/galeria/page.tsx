@@ -12,7 +12,7 @@ export default async function GaleriaPage() {
   /* Extract unique event names for filter tabs */
   const eventNames = Array.from(new Set(gallery.map((g) => g.event?.name).filter(Boolean))) as string[];
   return (
-    <section style={{ padding: "48px 64px 96px" }}>
+    <section className="page-section page-section-top" style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
       <div className="animate-fade-in" style={{ marginBottom: "64px" }}>
         <p
@@ -41,7 +41,7 @@ export default async function GaleriaPage() {
 
       {/* Event filter */}
       <div
-        className="animate-fade-in-delayed"
+        className="animate-fade-in-delayed filter-tabs"
         style={{
           display: "flex",
           gap: "24px",
@@ -76,6 +76,7 @@ export default async function GaleriaPage() {
 
       {/* Masonry-style grid — 3 columns */}
       <div
+        className="gallery-grid"
         style={{
           columns: "3",
           columnGap: "2px",

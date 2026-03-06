@@ -36,6 +36,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
     <section style={{ padding: "0 0 96px" }}>
       {/* Hero area — full width, event flyer placeholder */}
       <div
+        className="event-hero"
         style={{
           position: "relative",
           width: "100%",
@@ -70,7 +71,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
 
         {/* Event title over hero */}
         <div
-          className="animate-fade-in"
+          className="animate-fade-in event-hero-title"
           style={{ position: "relative", zIndex: 1, padding: "0 64px 48px" }}
         >
           <p
@@ -100,7 +101,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
 
       {/* Content: 2 columns — details + ticket module */}
       <div
-        className="animate-fade-in-delayed"
+        className="animate-fade-in-delayed event-detail-content"
         style={{
           display: "flex",
           gap: "64px",
@@ -111,6 +112,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
         <div style={{ flex: "1 1 60%", display: "flex", flexDirection: "column", gap: "48px" }}>
           {/* Event info strip */}
           <div
+            className="event-info-strip"
             style={{
               display: "flex",
               gap: "40px",
@@ -198,6 +200,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
               {lineup.map((entry) => (
                 <div
                   key={entry.id}
+                  className="lineup-entry"
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -255,6 +258,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
         {/* Right — Ticket module */}
         <div style={{ flex: "1 1 35%", maxWidth: "400px" }}>
           <div
+            className="ticket-module"
             style={{
               position: "sticky",
               top: "120px",
@@ -364,7 +368,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
       </div>
 
       {/* Back link */}
-      <div style={{ padding: "64px 64px 0" }}>
+      <div className="event-back-link" style={{ padding: "64px 64px 0" }}>
         <Link
           href="/eventos"
           className="hover:text-white transition-colors duration-300"

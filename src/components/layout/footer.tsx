@@ -20,8 +20,8 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#0a0a0a]">
       {/* Main footer content */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '80px 64px' }}>
-        <div style={{ display: 'flex', gap: '64px' }}>
+      <div className="footer-content" style={{ maxWidth: '1400px', margin: '0 auto', padding: '80px 64px' }}>
+        <div className="footer-grid" style={{ display: 'flex', gap: '64px' }}>
 
           {/* Col 1: Logo + description */}
           <div style={{ flex: '1 1 45%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -95,7 +95,7 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/5">
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px 64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="footer-bottom" style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px 64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
             © {new Date().getFullYear()} {siteConfig.name}. Todos los derechos reservados.
           </p>

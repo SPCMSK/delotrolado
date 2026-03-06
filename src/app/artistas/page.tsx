@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function ArtistasPage() {
   const artists = await getArtists();
   return (
-    <section style={{ padding: "48px 64px 96px" }}>
+    <section className="page-section page-section-top" style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
       <div className="animate-fade-in" style={{ marginBottom: "64px" }}>
         <p
@@ -39,7 +39,7 @@ export default async function ArtistasPage() {
 
       {/* Role filter */}
       <div
-        className="animate-fade-in-delayed"
+        className="animate-fade-in-delayed filter-tabs"
         style={{
           display: "flex",
           gap: "24px",
@@ -71,6 +71,7 @@ export default async function ArtistasPage() {
 
       {/* Artists grid */}
       <div
+        className="artists-grid"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",

@@ -24,7 +24,7 @@ export default async function ArtistaSlugPage({
   const artistEvents = await getArtistEvents(artist.id);
 
   return (
-    <section style={{ padding: "48px 64px 96px" }}>
+    <section className="page-section page-section-top" style={{ padding: "48px 64px 96px" }}>
       {/* Back link */}
       <div className="animate-fade-in" style={{ marginBottom: "48px" }}>
         <Link
@@ -43,12 +43,13 @@ export default async function ArtistaSlugPage({
 
       {/* Artist layout — two columns */}
       <div
-        className="animate-fade-in-delayed"
+        className="animate-fade-in-delayed artist-detail-layout"
         style={{ display: "flex", gap: "80px" }}
       >
         {/* Left — Photo placeholder */}
         <div style={{ flex: "1 1 45%" }}>
           <div
+            className="artist-photo"
             style={{
               aspectRatio: "3/4",
               backgroundColor: "#111",
@@ -178,7 +179,7 @@ export default async function ArtistaSlugPage({
             >
               Links
             </h2>
-            <div style={{ display: "flex", gap: "24px" }}>
+            <div className="artist-links" style={{ display: "flex", gap: "24px" }}>
               {[
                 { label: "SoundCloud", url: artist.soundcloud_url },
                 { label: "Instagram", url: artist.instagram_url },

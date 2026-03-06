@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import { updateSiteSettings } from "@/lib/admin-actions";
+import { uploadImage } from "@/lib/storage";
 
 interface Settings {
   id: string;
@@ -19,6 +20,8 @@ interface Settings {
   hero_subtitle: string | null;
   hero_cta_text: string | null;
   hero_cta_link: string | null;
+  hero_bg_url: string | null;
+  hero_bg_type: string | null;
   footer_text: string | null;
   ethos_text: string | null;
   min_age_default: number | null;
@@ -75,6 +78,8 @@ export default function AdminConfiguracionPage() {
       hero_subtitle: settings.hero_subtitle,
       hero_cta_text: settings.hero_cta_text,
       hero_cta_link: settings.hero_cta_link,
+      hero_bg_url: settings.hero_bg_url,
+      hero_bg_type: settings.hero_bg_type,
       footer_text: settings.footer_text,
       ethos_text: settings.ethos_text,
       min_age_default: settings.min_age_default,
@@ -128,6 +133,8 @@ export default function AdminConfiguracionPage() {
         { key: "hero_subtitle", label: "Subtítulo hero", type: "text" },
         { key: "hero_cta_text", label: "Texto botón CTA", type: "text" },
         { key: "hero_cta_link", label: "Link botón CTA", type: "text" },
+        { key: "hero_bg_type", label: "Tipo de fondo (image / video)", type: "text" },
+        { key: "hero_bg_url", label: "URL del fondo (o subir abajo)", type: "text" },
         { key: "ethos_text", label: "Texto ethos", type: "text" },
       ],
     },
@@ -292,6 +299,83 @@ export default function AdminConfiguracionPage() {
             </div>
           </div>
         ))}
+
+        {/* Hero background upload section */}
+        <div
+          style={{
+            background: "#111",
+            border: "1px solid #1a1a1a",
+            borderRadius: "0.5rem",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              color: "#fff",
+              marginBottom: "1.25rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            Subir fondo Hero (imagen o video)
+          </h2>
+
+          {settings.hero_bg_url && (
+            <div style={{ marginBottom: "1rem" }}>
+              <p style={{ fontSize: "0.75rem", color: "#888", marginBottom: "0.5rem" }}>
+                Fondo actual ({settings.hero_bg_type || "image"}):
+              </p>
+              {settings.hero_bg_type === "video" ? (
+                <video
+                  src={settings.hero_bg_url}
+                  style={{ maxWidth: "320px", borderRadius: "0.375rem", border: "1px solid #333" }}
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={settings.hero_bg_url}
+                  alt="Hero background"
+                  style={{ maxWidth: "320px", borderRadius: "0.375rem", border: "1px solid #333" }}
+                />
+              )}
+            </div>
+          )}
+
+          <input
+            type="file"
+            accept="image/*,video/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              setMessage(null);
+              const isVideo = file.type.startsWith("video/");
+
+              try {
+                const url = await uploadImage("site", file);
+                update("hero_bg_url", url);
+                update("hero_bg_type", isVideo ? "video" : "image");
+                setMessage({ type: "success", text: `Fondo ${isVideo ? "video" : "imagen"} subido. Guardá para aplicar.` });
+              } catch (err) {
+                setMessage({
+                  type: "error",
+                  text: `Error al subir: ${err instanceof Error ? err.message : "Error desconocido"}`,
+                });
+              }
+            }}
+            className="admin-input"
+            style={{ cursor: "pointer" }}
+          />
+          <p style={{ fontSize: "0.7rem", color: "#555", marginTop: "0.5rem" }}>
+            Formatos: JPG, PNG, WebP, MP4, WebM. Recomendado: 1920x1080 o más.
+          </p>
+        </div>
 
         <button
           type="submit"
