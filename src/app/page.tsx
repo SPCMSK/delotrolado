@@ -1,7 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getPublishedEvents } from "@/lib/data";
 
-export default function Home() {
+export default async function Home() {
+  const events = await getPublishedEvents();
+  const upcoming = events.slice(0, 3);
+
   return (
     <>
       {/* ── HERO ── full viewport height */}
@@ -65,13 +69,9 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Event cards — 3 columns */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
-          {[
-            { slug: 'noche-rota-vol-4', name: 'Noche Rota Vol. 4', date: 'SÁB 12 ABR', venue: 'Galpón Subterráneo', time: '23:30', tags: ['Techno', 'Hard Groove'] },
-            { slug: 'eclipse-total', name: 'Eclipse Total', date: 'SÁB 26 ABR', venue: 'Bodega Norte', time: '00:00', tags: ['Industrial', 'EBM'] },
-            { slug: 'ritual-sonoro-ii', name: 'Ritual Sonoro II', date: 'SÁB 10 MAY', venue: 'Espacio Raw', time: '23:00', tags: ['Dub Techno', 'Ambient'] },
-          ].map((event, i) => (
+        {upcoming.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(upcoming.length, 3)}, 1fr)`, gap: '2px' }}>
+          {upcoming.map((event, i) => (
             <Link
               key={event.slug}
               href={`/eventos/${event.slug}`}
@@ -105,10 +105,10 @@ export default function Home() {
               {/* Top: date + time */}
               <div style={{ position: 'relative', zIndex: 1 }}>
                 <p style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginBottom: '8px' }}>
-                  {event.date}
+                  {event.dayOfWeek} {event.day} {event.month}
                 </p>
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono), monospace' }}>
-                  Apertura {event.time}
+                  {event.doorsOpen ? `Apertura ${event.doorsOpen}` : ''}
                 </p>
               </div>
 
@@ -124,7 +124,7 @@ export default function Home() {
                   {event.venue}
                 </p>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  {event.tags.map((tag) => (
+                  {(event.tags ?? []).map((tag) => (
                     <span
                       key={tag}
                       style={{
@@ -144,6 +144,13 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        ) : (
+          <div style={{ border: '1px solid rgba(255,255,255,0.08)', padding: '80px 32px', textAlign: 'center' }}>
+            <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '15px' }}>
+              Próximamente se anunciarán nuevos eventos.
+            </p>
+          </div>
+        )}
       </section>
     </>
   );

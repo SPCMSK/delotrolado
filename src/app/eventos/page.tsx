@@ -1,70 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getPublishedEvents } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Eventos",
   description: "Cartelera de eventos — delotrolado",
 };
 
-/* ── Mock events (will be replaced by Supabase data) ── */
-const mockEvents = [
-  {
-    slug: "noche-rota-vol-4",
-    name: "Noche Rota Vol. 4",
-    date: "2026-04-12",
-    dayOfWeek: "SÁB",
-    day: "12",
-    month: "ABR",
-    venue: "Galpón Subterráneo",
-    city: "Valparaíso",
-    status: "published" as const,
-    doorsOpen: "23:30",
-    tags: ["Techno", "Hard Groove"],
-  },
-  {
-    slug: "eclipse-total",
-    name: "Eclipse Total",
-    date: "2026-04-26",
-    dayOfWeek: "SÁB",
-    day: "26",
-    month: "ABR",
-    venue: "Bodega Norte",
-    city: "Santiago",
-    status: "published" as const,
-    doorsOpen: "00:00",
-    tags: ["Industrial", "EBM"],
-  },
-  {
-    slug: "ritual-sonoro-ii",
-    name: "Ritual Sonoro II",
-    date: "2026-05-10",
-    dayOfWeek: "SÁB",
-    day: "10",
-    month: "MAY",
-    venue: "Espacio Raw",
-    city: "Valparaíso",
-    status: "published" as const,
-    doorsOpen: "23:00",
-    tags: ["Dub Techno", "Ambient"],
-  },
-  {
-    slug: "frecuencia-negra",
-    name: "Frecuencia Negra",
-    date: "2026-05-31",
-    dayOfWeek: "SÁB",
-    day: "31",
-    month: "MAY",
-    venue: "Centro Cultural Anónimo",
-    city: "Valparaíso",
-    status: "draft" as const,
-    doorsOpen: "23:30",
-    tags: ["Techno", "Acid"],
-  },
-];
-
-export default function EventosPage() {
-  const upcoming = mockEvents.filter((e) => e.status === "published");
-  const past: typeof mockEvents = [];
+export default async function EventosPage() {
+  const upcoming = await getPublishedEvents();
+  const past: typeof upcoming = [];
 
   return (
     <section style={{ padding: "48px 64px 96px" }}>
@@ -253,7 +198,7 @@ export default function EventosPage() {
                 </span>
               </div>
               <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
-                {event.tags.map((tag) => (
+                {(event.tags ?? []).map((tag) => (
                   <span
                     key={tag}
                     style={{

@@ -1,21 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Artista",
-};
+import { notFound } from "next/navigation";
+import { getArtistBySlug, getArtistEvents, roleLabel, formatDateLong } from "@/lib/data";
 
 interface ArtistaSlugPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ArtistaSlugPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const artist = await getArtistBySlug(slug);
+  if (!artist) return { title: "Artista no encontrado" };
+  return { title: artist.name, description: `${artist.name} — delotrolado` };
 }
 
 export default async function ArtistaSlugPage({
   params,
 }: ArtistaSlugPageProps) {
   const { slug } = await params;
-  const artistName = slug
-    .replace(/-/g, " ")
-    .toUpperCase();
+  const artist = await getArtistBySlug(slug);
+  if (!artist) notFound();
+
+  const artistEvents = await getArtistEvents(artist.id);
 
   return (
     <section style={{ padding: "48px 64px 96px" }}>
@@ -78,7 +84,7 @@ export default async function ArtistaSlugPage({
                   userSelect: "none",
                 }}
               >
-                {artistName.charAt(0)}
+                {artist.name.charAt(0)}
               </span>
             </div>
           </div>
@@ -117,7 +123,7 @@ export default async function ArtistaSlugPage({
                 marginBottom: "16px",
               }}
             >
-              {artistName}
+              {artist.name}
             </h1>
             <span
               style={{
@@ -130,7 +136,7 @@ export default async function ArtistaSlugPage({
                 display: "inline-block",
               }}
             >
-              Residente
+              {roleLabel(artist.role)}
             </span>
           </div>
 
@@ -155,9 +161,7 @@ export default async function ArtistaSlugPage({
                 maxWidth: "520px",
               }}
             >
-              La biografía del artista se cargará desde la base de datos. Aquí
-              se mostrará información sobre su trayectoria, estilo musical e
-              influencias.
+              {artist.bio ?? "Biografía próximamente."}
             </p>
           </div>
 
@@ -175,21 +179,31 @@ export default async function ArtistaSlugPage({
               Links
             </h2>
             <div style={{ display: "flex", gap: "24px" }}>
-              {["SoundCloud", "Instagram", "Resident Advisor"].map((link) => (
-                <span
-                  key={link}
-                  style={{
-                    fontSize: "14px",
-                    color: "rgba(255,255,255,0.35)",
-                    textDecoration: "underline",
-                    textUnderlineOffset: "4px",
-                    textDecorationColor: "rgba(255,255,255,0.15)",
-                    cursor: "pointer",
-                  }}
-                >
-                  {link}
-                </span>
-              ))}
+              {[
+                { label: "SoundCloud", url: artist.soundcloud_url },
+                { label: "Instagram", url: artist.instagram_url },
+                { label: "Resident Advisor", url: artist.ra_url },
+                { label: "Bandcamp", url: artist.bandcamp_url },
+              ]
+                .filter((l) => l.url)
+                .map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.url!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors duration-300"
+                    style={{
+                      fontSize: "14px",
+                      color: "rgba(255,255,255,0.35)",
+                      textDecoration: "underline",
+                      textUnderlineOffset: "4px",
+                      textDecorationColor: "rgba(255,255,255,0.15)",
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                ))}
             </div>
           </div>
 
@@ -207,18 +221,19 @@ export default async function ArtistaSlugPage({
               Próximos eventos
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-              {[
-                { name: "Noche Rota Vol. 4", date: "12 Abr 2026", venue: "Galpón Subterráneo" },
-                { name: "Ritual Sonoro II", date: "10 May 2026", venue: "Espacio Raw" },
-              ].map((event) => (
-                <div
-                  key={event.name}
+              {artistEvents.length > 0 ? artistEvents.map((event) => (
+                <Link
+                  key={event.id}
+                  href={`/eventos/${event.slug}`}
+                  className="hover:bg-white/5 transition-colors duration-200"
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                     padding: "16px 0",
                     borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    textDecoration: "none",
+                    color: "inherit",
                   }}
                 >
                   <div>
@@ -250,10 +265,14 @@ export default async function ArtistaSlugPage({
                       fontFamily: "var(--font-mono), monospace",
                     }}
                   >
-                    {event.date}
+                    {formatDateLong(event.date)}
                   </span>
-                </div>
-              ))}
+                </Link>
+              )) : (
+                <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.25)" }}>
+                  Sin eventos programados.
+                </p>
+              )}
             </div>
           </div>
         </div>

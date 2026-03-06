@@ -1,24 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getArtists, roleLabel } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Artistas",
   description: "Residentes e invitados — delotrolado",
 };
 
-/* ── Mock artists (will be replaced by Supabase data) ── */
-const mockArtists = [
-  { slug: "kra", name: "KRA", role: "Residente", initial: "K" },
-  { slug: "muro", name: "MURO", role: "Residente", initial: "M" },
-  { slug: "sombra", name: "SOMBRA", role: "Residente", initial: "S" },
-  { slug: "nøise", name: "NØISE", role: "Invitado", initial: "N" },
-  { slug: "vacio", name: "VACÍO", role: "Invitado", initial: "V" },
-  { slug: "frecuencia", name: "FRECUENCIA", role: "Residente", initial: "F" },
-  { slug: "raw-material", name: "RAW MATERIAL", role: "Live", initial: "R" },
-  { slug: "distorsion", name: "DISTORSIÓN", role: "Invitado", initial: "D" },
-];
-
-export default function ArtistasPage() {
+export default async function ArtistasPage() {
+  const artists = await getArtists();
   return (
     <section style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
@@ -87,7 +77,7 @@ export default function ArtistasPage() {
           gap: "2px",
         }}
       >
-        {mockArtists.map((artist, i) => (
+        {artists.map((artist, i) => (
           <Link
             key={artist.slug}
             href={`/artistas/${artist.slug}`}
@@ -118,7 +108,7 @@ export default function ArtistasPage() {
                 userSelect: "none",
               }}
             >
-              {artist.initial}
+              {artist.name.charAt(0)}
             </span>
 
             {/* Hover overlay */}
@@ -163,7 +153,7 @@ export default function ArtistasPage() {
                   color: "rgba(255,255,255,0.25)",
                 }}
               >
-                {artist.role}
+                {roleLabel(artist.role)}
               </span>
             </div>
           </Link>

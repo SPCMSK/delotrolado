@@ -124,3 +124,90 @@ button:hover {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   pointer-events: none;
 }
+
+/* ══════════════════════════════════
+   ADMIN PANEL STYLES
+   ══════════════════════════════════ */
+
+.admin-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 0.375rem;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: #fff;
+}
+
+.admin-input::placeholder {
+  color: #444;
+}
+
+.admin-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Select styling */
+.admin-input option {
+  background: #111;
+  color: #fff;
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+
+.admin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-btn-primary {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.admin-btn-primary:hover:not(:disabled) {
+  background: #e5e5e5;
+}
+
+.admin-btn-secondary {
+  background: transparent;
+  color: #ccc;
+  border-color: #333;
+}
+
+.admin-btn-secondary:hover:not(:disabled) {
+  border-color: #555;
+  color: #fff;
+}
+
+.admin-btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.admin-btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}

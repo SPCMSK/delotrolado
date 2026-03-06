@@ -1,24 +1,16 @@
 import type { Metadata } from "next";
+import { getGalleryImages } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Galería",
   description: "Fotos y videos de eventos — delotrolado",
 };
 
-/* ── Mock gallery items (will be replaced by Supabase data) ── */
-const mockGallery = [
-  { id: 1, event: "Noche Rota Vol. 3", photographer: "Anónimo", aspect: "4/5" },
-  { id: 2, event: "Eclipse", photographer: "Anónimo", aspect: "1/1" },
-  { id: 3, event: "Ritual Sonoro", photographer: "Anónimo", aspect: "3/4" },
-  { id: 4, event: "Noche Rota Vol. 3", photographer: "Anónimo", aspect: "1/1" },
-  { id: 5, event: "Frecuencia Negra", photographer: "Anónimo", aspect: "4/5" },
-  { id: 6, event: "Eclipse", photographer: "Anónimo", aspect: "3/4" },
-  { id: 7, event: "Ritual Sonoro", photographer: "Anónimo", aspect: "1/1" },
-  { id: 8, event: "Noche Rota Vol. 2", photographer: "Anónimo", aspect: "4/5" },
-  { id: 9, event: "Frecuencia Negra", photographer: "Anónimo", aspect: "3/4" },
-];
+export default async function GaleriaPage() {
+  const gallery = await getGalleryImages();
 
-export default function GaleriaPage() {
+  /* Extract unique event names for filter tabs */
+  const eventNames = Array.from(new Set(gallery.map((g) => g.event?.name).filter(Boolean))) as string[];
   return (
     <section style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
@@ -59,7 +51,7 @@ export default function GaleriaPage() {
           flexWrap: "wrap",
         }}
       >
-        {["Todos", "Noche Rota", "Eclipse", "Ritual Sonoro", "Frecuencia Negra"].map(
+        {["Todos", ...eventNames].map(
           (filter, i) => (
             <button
               key={filter}
@@ -89,7 +81,7 @@ export default function GaleriaPage() {
           columnGap: "2px",
         }}
       >
-        {mockGallery.map((item, i) => (
+        {gallery.map((item, i) => (
           <div
             key={item.id}
             className="group"
@@ -102,29 +94,37 @@ export default function GaleriaPage() {
               animation: `fadeIn 0.5s ease-out ${0.06 * (i + 1)}s both`,
             }}
           >
-            {/* Placeholder photo area */}
-            <div
-              style={{
-                aspectRatio: item.aspect,
-                backgroundColor: `hsl(0, 0%, ${8 + (i % 3) * 2}%)`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* Subtle grid texture */}
+            {/* Photo area */}
+            {item.url ? (
+              <img
+                src={item.url}
+                alt={item.alt ?? "Galería"}
+                style={{ width: "100%", display: "block" }}
+              />
+            ) : (
               <div
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundImage:
-                    "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
-                  backgroundSize: "20px 20px",
-                  position: "absolute",
-                  inset: 0,
+                  aspectRatio: "4/5",
+                  backgroundColor: `hsl(0, 0%, ${8 + (i % 3) * 2}%)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
                 }}
-              />
-            </div>
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundImage:
+                      "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                    position: "absolute",
+                    inset: 0,
+                  }}
+                />
+              </div>
+            )}
 
             {/* Overlay on hover */}
             <div
@@ -150,7 +150,7 @@ export default function GaleriaPage() {
                   color: "#fff",
                 }}
               >
-                {item.event}
+                {item.event?.name ?? ""}
               </span>
               <span
                 style={{
@@ -159,7 +159,7 @@ export default function GaleriaPage() {
                   marginTop: "4px",
                 }}
               >
-                Foto: {item.photographer}
+                {item.photographer ? `Foto: ${item.photographer}` : ""}
               </span>
             </div>
           </div>

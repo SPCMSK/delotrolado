@@ -1,19 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Evento",
-};
+import { notFound } from "next/navigation";
+import {
+  getEventBySlug,
+  getEventLineup,
+  getTicketTypes,
+  formatPrice,
+  ticketStatus,
+  formatDateLong,
+  roleLabel,
+} from "@/lib/data";
 
 interface EventoSlugPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateMetadata({ params }: EventoSlugPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const event = await getEventBySlug(slug);
+  if (!event) return { title: "Evento no encontrado" };
+  return { title: event.name, description: event.description ?? `${event.name} — delotrolado` };
+}
+
 export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
   const { slug } = await params;
-  const eventName = slug
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const event = await getEventBySlug(slug);
+  if (!event) notFound();
+
+  const [lineup, tickets] = await Promise.all([
+    getEventLineup(event.id),
+    getTicketTypes(event.id),
+  ]);
 
   return (
     <section style={{ padding: "0 0 96px" }}>
@@ -76,7 +93,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
               lineHeight: 1.05,
             }}
           >
-            {eventName}
+            {event.name}
           </h1>
         </div>
       </div>
@@ -102,11 +119,11 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
             }}
           >
             {[
-              { label: "Fecha", value: "12 Abril 2026" },
-              { label: "Apertura", value: "23:30 hs" },
-              { label: "Cierre", value: "07:00 hs" },
-              { label: "Venue", value: "Galpón Subterráneo" },
-              { label: "Ciudad", value: "Valparaíso" },
+              { label: "Fecha", value: formatDateLong(event.date) },
+              { label: "Apertura", value: event.doorsOpen ? `${event.doorsOpen} hs` : "—" },
+              { label: "Cierre", value: event.doorsClose ? `${event.doorsClose} hs` : "—" },
+              { label: "Venue", value: event.venue },
+              { label: "Ciudad", value: event.city },
             ].map((item) => (
               <div key={item.label}>
                 <p
@@ -154,9 +171,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                 maxWidth: "600px",
               }}
             >
-              Descripción del evento se cargará desde la base de datos. Aquí irá
-              un texto descriptivo sobre la temática de la noche, el concepto
-              detrás de la fiesta y qué pueden esperar los asistentes.
+              {event.description ?? "Información del evento próximamente."}
             </p>
           </div>
 
@@ -180,14 +195,9 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                 gap: "0",
               }}
             >
-              {[
-                { name: "KRA", time: "23:30 – 01:00", type: "DJ Set" },
-                { name: "MURO", time: "01:00 – 03:00", type: "DJ Set" },
-                { name: "RAW MATERIAL", time: "03:00 – 04:30", type: "Live" },
-                { name: "SOMBRA", time: "04:30 – 07:00", type: "DJ Set" },
-              ].map((artist) => (
+              {lineup.map((entry) => (
                 <div
-                  key={artist.name}
+                  key={entry.id}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -197,17 +207,23 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                    <span
-                      style={{
-                        fontSize: "17px",
-                        fontWeight: 600,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.06em",
-                        color: "rgba(255,255,255,0.8)",
-                      }}
+                    <Link
+                      href={`/artistas/${entry.artist.slug}`}
+                      className="hover:text-white transition-colors duration-300"
+                      style={{ textDecoration: "none", color: "inherit" }}
                     >
-                      {artist.name}
-                    </span>
+                      <span
+                        style={{
+                          fontSize: "17px",
+                          fontWeight: 600,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                          color: "rgba(255,255,255,0.8)",
+                        }}
+                      >
+                        {entry.artist.name}
+                      </span>
+                    </Link>
                     <span
                       style={{
                         fontSize: "11px",
@@ -218,7 +234,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                         padding: "3px 8px",
                       }}
                     >
-                      {artist.type}
+                      {entry.set_type}
                     </span>
                   </div>
                   <span
@@ -228,7 +244,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                       fontFamily: "var(--font-mono), monospace",
                     }}
                   >
-                    {artist.time}
+                    {entry.set_time && entry.set_end ? `${entry.set_time} – ${entry.set_end}` : ""}
                   </span>
                 </div>
               ))}
@@ -261,13 +277,12 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
             </h3>
 
             {/* Ticket tiers */}
-            {[
-              { name: "Early Bird", price: "$5.000", status: "Agotado" },
-              { name: "General", price: "$8.000", status: "Disponible" },
-              { name: "Puerta", price: "$12.000", status: "En puerta" },
-            ].map((tier) => (
+            {tickets.map((tier) => {
+              const status = ticketStatus(tier);
+              const soldOut = status === "Agotado";
+              return (
               <div
-                key={tier.name}
+                key={tier.id}
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -281,10 +296,9 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                     style={{
                       fontSize: "15px",
                       fontWeight: 500,
-                      color:
-                        tier.status === "Agotado"
-                          ? "rgba(255,255,255,0.25)"
-                          : "rgba(255,255,255,0.8)",
+                      color: soldOut
+                        ? "rgba(255,255,255,0.25)"
+                        : "rgba(255,255,255,0.8)",
                     }}
                   >
                     {tier.name}
@@ -296,25 +310,24 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                       marginTop: "4px",
                     }}
                   >
-                    {tier.status}
+                    {status}
                   </p>
                 </div>
                 <span
                   style={{
                     fontSize: "17px",
                     fontWeight: 600,
-                    color:
-                      tier.status === "Agotado"
-                        ? "rgba(255,255,255,0.2)"
-                        : "#fff",
-                    textDecoration:
-                      tier.status === "Agotado" ? "line-through" : "none",
+                    color: soldOut
+                      ? "rgba(255,255,255,0.2)"
+                      : "#fff",
+                    textDecoration: soldOut ? "line-through" : "none",
                   }}
                 >
-                  {tier.price}
+                  {formatPrice(tier.price)}
                 </span>
               </div>
-            ))}
+              );
+            })}
 
             {/* Buy button */}
             <button
