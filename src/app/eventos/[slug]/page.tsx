@@ -47,6 +47,28 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
           overflow: "hidden",
         }}
       >
+        {/* Hero/Flyer background image */}
+        {(event.hero_url || event.flyer_url) && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url(${event.hero_url || event.flyer_url})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+        )}
+        {/* Dark overlay for readability */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: (event.hero_url || event.flyer_url)
+              ? "rgba(0,0,0,0.55)"
+              : "transparent",
+          }}
+        />
         {/* Grid texture overlay */}
         <div
           style={{

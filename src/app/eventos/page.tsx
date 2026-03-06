@@ -90,7 +90,7 @@ export default async function EventosPage() {
             className="group event-row"
             style={{
               display: "grid",
-              gridTemplateColumns: "100px 1fr auto",
+              gridTemplateColumns: event.flyer_url ? "64px 100px 1fr auto" : "100px 1fr auto",
               gap: "40px",
               alignItems: "center",
               padding: "32px 0",
@@ -100,6 +100,29 @@ export default async function EventosPage() {
               animation: `fadeIn 0.6s ease-out ${0.1 * (i + 1)}s both`,
             }}
           >
+            {/* Flyer thumbnail */}
+            {event.flyer_url && (
+              <div
+                style={{
+                  width: "64px",
+                  height: "64px",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                  backgroundColor: "#111",
+                  flexShrink: 0,
+                }}
+              >
+                <img
+                  src={event.flyer_url}
+                  alt={event.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+            )}
             {/* Date block */}
             <div
               style={{

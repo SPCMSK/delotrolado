@@ -132,6 +132,29 @@ export default async function Home() {
                 animation: `fadeIn 0.6s ease-out ${0.15 * (i + 1)}s both`,
               }}
             >
+              {/* Flyer background */}
+              {event.flyer_url && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: `url(${event.flyer_url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                />
+              )}
+              {/* Dark overlay for readability */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: event.flyer_url
+                    ? 'rgba(0,0,0,0.6)'
+                    : 'transparent',
+                  pointerEvents: 'none',
+                }}
+              />
               {/* Hover overlay */}
               <div
                 className="group-hover:opacity-100 transition-opacity duration-300"
