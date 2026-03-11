@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
@@ -14,6 +15,8 @@ import {
   ExternalLink,
   ShoppingCart,
   ScanLine,
+  Menu,
+  X,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -34,6 +37,21 @@ export function AdminSidebar({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Close on Escape
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
@@ -47,46 +65,55 @@ export function AdminSidebar({
     router.refresh();
   }
 
-  return (
-    <aside
-      style={{
-        width: "240px",
-        minWidth: "240px",
-        background: "#0a0a0a",
-        borderRight: "1px solid #1a1a1a",
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-      }}
-    >
+  const sidebarContent = (
+    <>
       {/* Header */}
       <div
         style={{
           padding: "1.5rem 1.25rem",
           borderBottom: "1px solid #1a1a1a",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <div
+        <div>
+          <div
+            style={{
+              fontSize: "0.875rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              color: "#fff",
+            }}
+          >
+            DELOTROLADO
+          </div>
+          <div
+            style={{
+              fontSize: "0.625rem",
+              letterSpacing: "0.2em",
+              color: "#555",
+              marginTop: "0.25rem",
+              textTransform: "uppercase",
+            }}
+          >
+            Admin Panel
+          </div>
+        </div>
+        {/* Close button — mobile only */}
+        <button
+          className="admin-mobile-only"
+          onClick={() => setOpen(false)}
           style={{
-            fontSize: "0.875rem",
-            fontWeight: 700,
-            letterSpacing: "0.12em",
-            color: "#fff",
+            background: "none",
+            border: "none",
+            color: "#888",
+            cursor: "pointer",
+            padding: "4px",
           }}
         >
-          DELOTROLADO
-        </div>
-        <div
-          style={{
-            fontSize: "0.625rem",
-            letterSpacing: "0.2em",
-            color: "#555",
-            marginTop: "0.25rem",
-            textTransform: "uppercase",
-          }}
-        >
-          Admin Panel
-        </div>
+          <X size={20} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -139,7 +166,6 @@ export function AdminSidebar({
           borderTop: "1px solid #1a1a1a",
         }}
       >
-        {/* Back to site */}
         <a
           href="/"
           target="_blank"
@@ -161,8 +187,6 @@ export function AdminSidebar({
           <ExternalLink size={14} />
           Ver sitio
         </a>
-
-        {/* User info + Logout */}
         <div
           style={{
             padding: "0.75rem",
@@ -215,6 +239,55 @@ export function AdminSidebar({
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <div className="admin-topbar">
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#fff",
+            cursor: "pointer",
+            padding: "4px",
+          }}
+        >
+          <Menu size={22} />
+        </button>
+        <span
+          style={{
+            fontSize: "0.8125rem",
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            color: "#fff",
+          }}
+        >
+          DELOTROLADO
+        </span>
+        <div style={{ width: "30px" }} />
+      </div>
+
+      {/* Desktop sidebar */}
+      <aside className="admin-sidebar-desktop">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {open && (
+        <>
+          <div
+            className="admin-sidebar-backdrop"
+            onClick={() => setOpen(false)}
+          />
+          <aside className="admin-sidebar-mobile">
+            {sidebarContent}
+          </aside>
+        </>
+      )}
+    </>
   );
 }

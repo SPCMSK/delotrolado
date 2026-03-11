@@ -32,16 +32,9 @@ export default async function AdminPanelLayout({
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="admin-shell">
       <AdminSidebar user={profile} />
-      <main
-        style={{
-          flex: 1,
-          overflow: "auto",
-          padding: "2rem",
-          background: "#0a0a0a",
-        }}
-      >
+      <main className="admin-main">
         {children}
       </main>
     </div>

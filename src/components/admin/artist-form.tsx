@@ -210,13 +210,7 @@ export function ArtistForm({ initialData }: Props) {
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-3">
         <div style={fieldWrap}>
           <label style={labelStyle}>Nombre *</label>
           <input
@@ -264,13 +258,7 @@ export function ArtistForm({ initialData }: Props) {
         />
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-2">
         <div style={fieldWrap}>
           <label style={labelStyle}>Géneros (separar con coma)</label>
           <input
@@ -280,13 +268,7 @@ export function ArtistForm({ initialData }: Props) {
             placeholder="Techno, Industrial"
           />
         </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "0.75rem",
-          }}
-        >
+        <div className="admin-grid-2">
           <div style={fieldWrap}>
             <label style={labelStyle}>Orden</label>
             <input
@@ -386,13 +368,7 @@ export function ArtistForm({ initialData }: Props) {
       >
         Links
       </h3>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-2">
         {[
           { key: "instagram_url", label: "Instagram", placeholder: "https://instagram.com/..." },
           { key: "soundcloud_url", label: "SoundCloud", placeholder: "https://soundcloud.com/..." },

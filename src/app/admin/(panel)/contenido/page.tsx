@@ -420,10 +420,8 @@ export default function AdminContenidoPage() {
             Nuevo bloque de contenido
           </h3>
           <div
+            className="admin-grid-2"
             style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1rem",
               marginBottom: "0.75rem",
             }}
           >

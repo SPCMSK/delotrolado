@@ -223,13 +223,7 @@ export function EventForm({ initialData }: Props) {
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-2">
         {/* Name */}
         <div style={fieldWrap}>
           <label style={labelStyle}>Nombre *</label>
@@ -268,13 +262,7 @@ export function EventForm({ initialData }: Props) {
         />
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-3">
         {/* Date */}
         <div style={fieldWrap}>
           <label style={labelStyle}>Fecha *</label>
@@ -310,13 +298,7 @@ export function EventForm({ initialData }: Props) {
         </div>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-3">
         {/* Venue */}
         <div style={fieldWrap}>
           <label style={labelStyle}>Venue *</label>
@@ -352,13 +334,7 @@ export function EventForm({ initialData }: Props) {
         </div>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
-          gap: "1rem",
-        }}
-      >
+      <div className="admin-grid-5">
         {/* Status */}
         <div style={fieldWrap}>
           <label style={labelStyle}>Estado</label>
@@ -426,10 +402,8 @@ export function EventForm({ initialData }: Props) {
 
       {/* Image uploads */}
       <div
+        className="admin-grid-2"
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1rem",
           marginBottom: "1.5rem",
         }}
       >

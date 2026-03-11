@@ -72,11 +72,11 @@ export default async function AdminArtistasPage() {
         </div>
       ) : (
         <div
+          className="admin-table-wrap"
           style={{
             background: "#111",
             border: "1px solid #1a1a1a",
             borderRadius: "0.5rem",
-            overflow: "hidden",
           }}
         >
           <table

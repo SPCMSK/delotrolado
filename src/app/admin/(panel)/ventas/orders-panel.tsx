@@ -58,7 +58,7 @@ export function OrdersPanel({
   return (
     <div>
       {/* Stats row */}
-      <div style={{ display: "flex", gap: "24px", marginBottom: "32px" }}>
+      <div className="admin-stats-row" style={{ marginBottom: "32px" }}>
         {[
           { label: "Total órdenes", value: stats.total },
           { label: "Aprobadas", value: stats.approved },
@@ -83,7 +83,7 @@ export function OrdersPanel({
       </div>
 
       {/* Filter tabs */}
-      <div style={{ display: "flex", gap: "8px", marginBottom: "24px" }}>
+      <div style={{ display: "flex", gap: "8px", marginBottom: "24px", flexWrap: "wrap" }}>
         {["all", "pending", "approved", "rejected", "refunded"].map(f => (
           <button
             key={f}

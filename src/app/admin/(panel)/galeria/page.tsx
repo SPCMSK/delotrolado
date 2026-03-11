@@ -206,10 +206,8 @@ export default function AdminGaleriaPage() {
         )}
 
         <div
+          className="admin-grid-3 admin-upload-grid"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: "1rem",
             marginBottom: "1rem",
           }}
         >
@@ -309,11 +307,7 @@ export default function AdminGaleriaPage() {
         </p>
       ) : (
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "1rem",
-          }}
+          className="admin-grid-4 admin-gallery-grid"
         >
           {images.map((img) => (
             <div

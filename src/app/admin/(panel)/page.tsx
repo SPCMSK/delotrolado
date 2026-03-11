@@ -86,10 +86,8 @@ export default async function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div
+        className="admin-grid-4"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "1rem",
           marginBottom: "2.5rem",
         }}
       >
