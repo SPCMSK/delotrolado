@@ -207,7 +207,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                 textTransform: "uppercase",
                 letterSpacing: "0.25em",
                 color: "rgba(255,255,255,0.25)",
-                marginBottom: "24px",
+                marginBottom: "32px",
               }}
             >
               Lineup
@@ -219,7 +219,7 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                 gap: "0",
               }}
             >
-              {lineup.map((entry) => (
+              {lineup.map((entry, i) => (
                 <div
                   key={entry.id}
                   className="lineup-entry"
@@ -227,45 +227,75 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "18px 0",
-                    borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    padding: "20px 0",
+                    borderBottom: "1px solid rgba(255,255,255,0.06)",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                    <Link
-                      href={`/artistas/${entry.artist.slug}`}
-                      className="hover:text-white transition-colors duration-300"
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "17px",
-                          fontWeight: 600,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.06em",
-                          color: "rgba(255,255,255,0.8)",
-                        }}
-                      >
-                        {entry.artist.name}
-                      </span>
-                    </Link>
+                  <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                    {/* Numbered index */}
                     <span
                       style={{
                         fontSize: "11px",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.12em",
-                        color: "rgba(255,255,255,0.25)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        padding: "3px 8px",
+                        fontFamily: "var(--font-mono), monospace",
+                        color: "rgba(255,255,255,0.15)",
+                        minWidth: "24px",
                       }}
                     >
-                      {entry.set_type}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
+                    {/* Artist photo thumbnail */}
+                    {entry.artist.photo_url && (
+                      <div
+                        style={{
+                          width: "44px",
+                          height: "44px",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <img
+                          src={entry.artist.photo_url}
+                          alt={entry.artist.name}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      </div>
+                    )}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <Link
+                        href={`/artistas/${entry.artist.slug}`}
+                        className="hover:text-white transition-colors duration-300"
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "clamp(18px, 2.2vw, 24px)",
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em",
+                            color: "rgba(255,255,255,0.9)",
+                          }}
+                        >
+                          {entry.artist.name}
+                        </span>
+                      </Link>
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.12em",
+                          color: "rgba(255,255,255,0.2)",
+                        }}
+                      >
+                        {entry.set_type}
+                      </span>
+                    </div>
                   </div>
                   <span
                     style={{
                       fontSize: "14px",
-                      color: "rgba(255,255,255,0.3)",
+                      color: "rgba(255,255,255,0.25)",
                       fontFamily: "var(--font-mono), monospace",
                     }}
                   >

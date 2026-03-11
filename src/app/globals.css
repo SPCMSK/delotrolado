@@ -403,3 +403,10 @@ button:hover {
     gap: 8px !important;
   }
 }
+
+/* ── Gallery grid responsive ── */
+@media (max-width: 768px) {
+  .home-gallery-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

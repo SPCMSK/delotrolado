@@ -55,35 +55,25 @@ export default async function Home() {
         />
 
         <div className="relative z-10 flex flex-col items-center text-center px-6 w-full">
-          {/* ── Logo central ── */}
-          <div className="animate-fade-in" style={{ marginBottom: '56px' }}>
-            <div className="relative w-[280px] sm:w-[380px] md:w-[460px] lg:w-[540px] xl:w-[600px] h-[140px] sm:h-[190px] md:h-[230px] lg:h-[270px] xl:h-[300px] mx-auto overflow-hidden">
-              <div className="absolute inset-0 w-full h-[180%] -top-[40%]">
-                <Image
-                  src="/logos/LOGO-BLANCO.png"
-                  alt="delotrolado"
-                  fill
-                  className="object-contain object-center"
-                  priority
-                />
-              </div>
+          {/* ── Logo central (includes "delotrolado club" text) ── */}
+          <div className="animate-fade-in" style={{ marginBottom: '80px' }}>
+            <div style={{ width: 'min(70vw, 520px)', height: 'min(70vw, 520px)', margin: '0 auto', position: 'relative' }}>
+              <Image
+                src="/LOGOS DOL SVG/3.svg"
+                alt="delotrolado club"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
           </div>
 
-          {/* ── Texto principal ── */}
-          <div className="animate-fade-in-delayed flex flex-col items-center">
-
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-[0.08em] leading-none" style={{ marginBottom: '20px' }}>
-              DELOTROLADO
-            </h1>
-
-            <p className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.08em] text-white/40" style={{ marginBottom: '100px' }}>
-              CLUB
-            </p>
-
+          {/* ── CTA button ── */}
+          <div className="animate-fade-in-delayed">
             <Link
               href="/eventos"
-              className="inline-block border border-white px-16 md:px-20 py-5 md:py-6 text-xs md:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-300"
+              style={{ padding: '18px 48px' }}
+              className="inline-block border border-white text-xs md:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-300"
             >
               Ver eventos
             </Link>
@@ -217,6 +207,8 @@ export default async function Home() {
           </div>
         )}
       </section>
+
+
     </>
   );
 }
