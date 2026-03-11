@@ -31,14 +31,12 @@ export default async function Home() {
             <source src={settings.hero_bg_url} />
           </video>
         ) : settings?.hero_bg_url ? (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `url(${settings.hero_bg_url})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+          <Image
+            src={settings.hero_bg_url}
+            alt=""
+            fill
+            priority
+            style={{ objectFit: "cover", objectPosition: "center" }}
           />
         ) : (
           <div className="absolute inset-0 bg-black" />
@@ -124,14 +122,12 @@ export default async function Home() {
             >
               {/* Flyer background */}
               {event.flyer_url && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: `url(${event.flyer_url})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
+                <Image
+                  src={event.flyer_url}
+                  alt={event.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{ objectFit: "cover", objectPosition: "center" }}
                 />
               )}
               {/* Dark overlay for readability */}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface EventItem {
   slug: string;
@@ -109,12 +110,12 @@ export default function EventsView({ upcoming, past }: Props) {
                   flexShrink: 0,
                 }}
               >
-                <img
+                <Image
                   src={event.flyer_url}
                   alt={event.name}
+                  width={64}
+                  height={64}
                   style={{
-                    width: "100%",
-                    height: "100%",
                     objectFit: "cover",
                   }}
                 />

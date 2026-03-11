@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 interface GalleryImage {
   id: string;
@@ -100,10 +101,13 @@ export default function GalleryView({ images, eventNames }: Props) {
               }}
             >
               {item.url ? (
-                <img
+                <Image
                   src={item.url}
                   alt={item.alt ?? "Galería"}
-                  style={{ width: "100%", display: "block" }}
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{ width: "100%", height: "auto", display: "block" }}
                 />
               ) : (
                 <div

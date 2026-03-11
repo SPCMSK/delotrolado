@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   getEventBySlug,
@@ -48,13 +49,14 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
       >
         {/* Hero/Flyer background image */}
         {(event.hero_url || event.flyer_url) && (
-          <div
+          <Image
+            src={(event.hero_url || event.flyer_url)!}
+            alt={event.name}
+            fill
+            priority
             style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `url(${event.hero_url || event.flyer_url})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              objectFit: "cover",
+              objectPosition: "center",
             }}
           />
         )}
@@ -254,10 +256,12 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
                           flexShrink: 0,
                         }}
                       >
-                        <img
+                        <Image
                           src={entry.artist.photo_url}
                           alt={entry.artist.name}
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          width={44}
+                          height={44}
+                          style={{ objectFit: "cover" }}
                         />
                       </div>
                     )}

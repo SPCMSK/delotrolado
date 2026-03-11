@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getArtists, roleLabel } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -97,7 +98,16 @@ export default async function ArtistasPage() {
               animation: `fadeIn 0.5s ease-out ${0.06 * (i + 1)}s both`,
             }}
           >
-            {/* Large initial letter as background texture */}
+            {/* Artist photo or large initial letter */}
+            {artist.photo_url ? (
+              <Image
+                src={artist.photo_url}
+                alt={artist.name}
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                style={{ objectFit: "cover", opacity: 0.6 }}
+              />
+            ) : (
             <span
               className="group-hover:scale-110 transition-transform duration-700"
               style={{
@@ -111,6 +121,7 @@ export default async function ArtistasPage() {
             >
               {artist.name.charAt(0)}
             </span>
+            )}
 
             {/* Hover overlay */}
             <div

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getArtistBySlug, getArtistEvents, roleLabel, formatDateLong } from "@/lib/data";
 
@@ -57,37 +58,50 @@ export default async function ArtistaSlugPage({
               overflow: "hidden",
             }}
           >
-            {/* Subtle texture */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-              }}
-            />
-            {/* Large initial */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span
+            {artist.photo_url ? (
+              <Image
+                src={artist.photo_url}
+                alt={artist.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 45vw"
+                style={{ objectFit: "cover" }}
+                priority
+              />
+            ) : (
+              <>
+              {/* Subtle texture */}
+              <div
                 style={{
-                  fontSize: "200px",
-                  fontWeight: 800,
-                  color: "rgba(255,255,255,0.03)",
-                  userSelect: "none",
+                  position: "absolute",
+                  inset: 0,
+                  backgroundImage:
+                    "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+                  backgroundSize: "20px 20px",
+                }}
+              />
+              {/* Large initial */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                {artist.name.charAt(0)}
-              </span>
-            </div>
+                <span
+                  style={{
+                    fontSize: "200px",
+                    fontWeight: 800,
+                    color: "rgba(255,255,255,0.03)",
+                    userSelect: "none",
+                  }}
+                >
+                  {artist.name.charAt(0)}
+                </span>
+              </div>
+              </>
+            )}
           </div>
         </div>
 
