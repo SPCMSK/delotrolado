@@ -32,6 +32,7 @@ interface Props {
     tags: string[] | null;
     min_age: number | null;
     is_featured: boolean;
+    is_past: boolean;
   };
 }
 
@@ -55,6 +56,7 @@ export function EventForm({ initialData }: Props) {
     tags: (initialData?.tags ?? []).join(", "),
     min_age: initialData?.min_age?.toString() ?? "18",
     is_featured: initialData?.is_featured ?? false,
+    is_past: initialData?.is_past ?? false,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -147,6 +149,7 @@ export function EventForm({ initialData }: Props) {
           : [],
         min_age: form.min_age ? parseInt(form.min_age) : null,
         is_featured: form.is_featured,
+        is_past: form.is_past,
       };
 
       const result = isEditing
@@ -352,7 +355,7 @@ export function EventForm({ initialData }: Props) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
+          gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
           gap: "1rem",
         }}
       >
@@ -405,6 +408,19 @@ export function EventForm({ initialData }: Props) {
           <label htmlFor="is_featured" style={{ fontSize: "0.8125rem", color: "#aaa" }}>
             Destacado
           </label>
+        </div>
+
+        {/* Temporalidad */}
+        <div style={fieldWrap}>
+          <label style={labelStyle}>Temporalidad</label>
+          <select
+            className="admin-input"
+            value={form.is_past ? "past" : "upcoming"}
+            onChange={(e) => handleChange("is_past", e.target.value === "past")}
+          >
+            <option value="upcoming">Próximo / Vigente</option>
+            <option value="past">Evento pasado</option>
+          </select>
         </div>
       </div>
 

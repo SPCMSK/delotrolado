@@ -11,7 +11,7 @@ export default function AdminRootLayout({
         zIndex: 9999,
         background: "#0a0a0a",
         overflow: "auto",
-        fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
+        fontFamily: "var(--font-main), system-ui, sans-serif",
       }}
     >
       {children}

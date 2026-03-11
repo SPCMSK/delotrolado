@@ -7,7 +7,7 @@ export default async function AdminEventosPage() {
   const supabase = await createSupabaseServer();
   const { data: events, error } = await supabase
     .from("events")
-    .select("id, slug, name, date, venue, city, status, is_featured")
+    .select("id, slug, name, date, venue, city, status, is_featured, is_past")
     .order("date", { ascending: false });
 
   if (error) {
@@ -94,7 +94,7 @@ export default async function AdminEventosPage() {
           >
             <thead>
               <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                {["Nombre", "Fecha", "Venue", "Estado", "Acciones"].map(
+                {["Nombre", "Fecha", "Venue", "Estado", "Temporal.", "Acciones"].map(
                   (h) => (
                     <th
                       key={h}
@@ -139,7 +139,7 @@ export default async function AdminEventosPage() {
                       style={{
                         fontSize: "0.6875rem",
                         color: "#555",
-                        fontFamily: "var(--font-geist-mono)",
+                        fontFamily: "var(--font-main)",
                       }}
                     >
                       /{event.slug}
@@ -175,6 +175,23 @@ export default async function AdminEventosPage() {
                         }}
                       />
                       {STATUS_LABELS[event.status] ?? event.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: "0.75rem 1rem" }}>
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        fontWeight: 500,
+                        padding: "0.25rem 0.625rem",
+                        borderRadius: "9999px",
+                        background: event.is_past
+                          ? "rgba(156,163,175,0.1)"
+                          : "rgba(59,130,246,0.1)",
+                        color: event.is_past ? "#9ca3af" : "#3b82f6",
+                        border: `1px solid ${event.is_past ? "rgba(156,163,175,0.3)" : "rgba(59,130,246,0.3)"}`,
+                      }}
+                    >
+                      {event.is_past ? "Pasado" : "Vigente"}
                     </span>
                   </td>
                   <td style={{ padding: "0.75rem 1rem" }}>

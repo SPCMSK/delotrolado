@@ -12,6 +12,8 @@ import {
   Settings,
   LogOut,
   ExternalLink,
+  ShoppingCart,
+  ScanLine,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -19,6 +21,8 @@ const NAV_ITEMS = [
   { href: "/admin/eventos", label: "Eventos", icon: CalendarDays },
   { href: "/admin/artistas", label: "Artistas", icon: Users },
   { href: "/admin/galeria", label: "Galería", icon: Image },
+  { href: "/admin/ventas", label: "Ventas", icon: ShoppingCart },
+  { href: "/admin/scanner", label: "Scanner QR", icon: ScanLine },
   { href: "/admin/contenido", label: "Contenido", icon: FileText },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings },
 ];

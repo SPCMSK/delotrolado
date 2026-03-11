@@ -8,7 +8,6 @@ import {
   formatPrice,
   ticketStatus,
   formatDateLong,
-  roleLabel,
 } from "@/lib/data";
 
 interface EventoSlugPageProps {
@@ -332,89 +331,111 @@ export default async function EventoSlugPage({ params }: EventoSlugPageProps) {
               Entradas
             </h3>
 
-            {/* Ticket tiers */}
-            {tickets.map((tier) => {
-              const status = ticketStatus(tier);
-              const soldOut = status === "Agotado";
-              return (
-              <div
-                key={tier.id}
+            {event.is_past ? (
+              <p
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingBottom: "16px",
-                  borderBottom: "1px solid rgba(255,255,255,0.06)",
+                  fontSize: "14px",
+                  color: "rgba(255,255,255,0.3)",
+                  textAlign: "center",
+                  lineHeight: 1.6,
+                  padding: "24px 0",
                 }}
               >
-                <div>
-                  <p
+                Este evento ya pasó.
+                <br />
+                La venta de entradas no está disponible.
+              </p>
+            ) : (
+              <>
+                {/* Ticket tiers */}
+                {tickets.map((tier) => {
+                  const status = ticketStatus(tier);
+                  const soldOut = status === "Agotado";
+                  return (
+                  <div
+                    key={tier.id}
                     style={{
-                      fontSize: "15px",
-                      fontWeight: 500,
-                      color: soldOut
-                        ? "rgba(255,255,255,0.25)"
-                        : "rgba(255,255,255,0.8)",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      paddingBottom: "16px",
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
-                    {tier.name}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "12px",
-                      color: "rgba(255,255,255,0.3)",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {status}
-                  </p>
-                </div>
-                <span
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "15px",
+                          fontWeight: 500,
+                          color: soldOut
+                            ? "rgba(255,255,255,0.25)"
+                            : "rgba(255,255,255,0.8)",
+                        }}
+                      >
+                        {tier.name}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "rgba(255,255,255,0.3)",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {status}
+                      </p>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "17px",
+                        fontWeight: 600,
+                        color: soldOut
+                          ? "rgba(255,255,255,0.2)"
+                          : "#fff",
+                        textDecoration: soldOut ? "line-through" : "none",
+                      }}
+                    >
+                      {formatPrice(tier.price)}
+                    </span>
+                  </div>
+                  );
+                })}
+
+                {/* Buy button */}
+                <Link
+                  href={`/eventos/${event.slug}/checkout`}
                   style={{
-                    fontSize: "17px",
+                    display: "block",
+                    width: "100%",
+                    padding: "18px",
+                    backgroundColor: "#fff",
+                    color: "#000",
+                    border: "none",
+                    fontSize: "13px",
                     fontWeight: 600,
-                    color: soldOut
-                      ? "rgba(255,255,255,0.2)"
-                      : "#fff",
-                    textDecoration: soldOut ? "line-through" : "none",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    textDecoration: "none",
                   }}
                 >
-                  {formatPrice(tier.price)}
-                </span>
-              </div>
-              );
-            })}
+                  Comprar entrada
+                </Link>
 
-            {/* Buy button */}
-            <button
-              style={{
-                width: "100%",
-                padding: "18px",
-                backgroundColor: "#fff",
-                color: "#000",
-                border: "none",
-                fontSize: "13px",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-                cursor: "pointer",
-              }}
-            >
-              Comprar entrada
-            </button>
-
-            <p
-              style={{
-                fontSize: "12px",
-                color: "rgba(255,255,255,0.2)",
-                textAlign: "center",
-                lineHeight: 1.6,
-              }}
-            >
-              Pago seguro vía MercadoPago.
-              <br />
-              Recibirás tu entrada con código QR por email.
-            </p>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    color: "rgba(255,255,255,0.2)",
+                    textAlign: "center",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Pago seguro vía MercadoPago.
+                  <br />
+                  Recibirás tu entrada con código QR por email.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

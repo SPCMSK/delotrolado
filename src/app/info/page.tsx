@@ -1,13 +1,29 @@
 import type { Metadata } from "next";
 import { Instagram } from "lucide-react";
-import { siteConfig } from "@/lib/config";
+import { getPageContent, getSiteSettings } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Info",
   description: "Sobre el colectivo delotrolado",
 };
 
-export default function InfoPage() {
+export default async function InfoPage() {
+  const [content, settings] = await Promise.all([
+    getPageContent("info"),
+    getSiteSettings(),
+  ]);
+
+  const aboutTitle = content.find(c => c.section_key === "about_title");
+  const aboutBodies = content
+    .filter(c => c.section_key.startsWith("about_body"))
+    .sort((a, b) => a.sort_order - b.sort_order);
+  const contactIntro = content.find(c => c.section_key === "contact_intro");
+  const location = content.find(c => c.section_key === "location");
+
+  const email = settings?.contact_email || "contacto@delotrolado.club";
+  const instagram = settings?.instagram_url || "https://www.instagram.com/__delotrolado/";
+  const ethos = settings?.ethos_text || "No fotos · No flash · No teléfonos en pista";
+
   return (
     <section className="page-section page-section-top" style={{ padding: "48px 64px 96px" }}>
       {/* Header */}
@@ -53,43 +69,21 @@ export default function InfoPage() {
                 marginBottom: "32px",
               }}
             >
-              ¿Qué es delotrolado?
+              {aboutTitle?.title || "¿Qué es delotrolado?"}
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-              <p
-                style={{
-                  fontSize: "17px",
-                  lineHeight: 1.8,
-                  color: "rgba(255,255,255,0.55)",
-                }}
-              >
-                Delotrolado es un colectivo dedicado a la música electrónica
-                underground. Nacimos de la necesidad de crear espacios donde el
-                sonido y la experiencia colectiva fueran lo central — lejos de
-                lo comercial, lejos de lo obvio.
-              </p>
-              <p
-                style={{
-                  fontSize: "17px",
-                  lineHeight: 1.8,
-                  color: "rgba(255,255,255,0.55)",
-                }}
-              >
-                Organizamos fiestas en espacios no convencionales de Valparaíso
-                y Santiago, con un foco en techno, industrial, dub y ambient.
-                Cada evento es una pieza única — curada, íntima y sin
-                compromisos.
-              </p>
-              <p
-                style={{
-                  fontSize: "17px",
-                  lineHeight: 1.8,
-                  color: "rgba(255,255,255,0.55)",
-                }}
-              >
-                Creemos en la pista de baile como ritual, en el anonimato como
-                libertad, y en que la mejor música se encuentra del otro lado.
-              </p>
+              {aboutBodies.map((block) => (
+                <p
+                  key={block.id}
+                  style={{
+                    fontSize: "17px",
+                    lineHeight: 1.8,
+                    color: "rgba(255,255,255,0.55)",
+                  }}
+                >
+                  {block.body}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -107,14 +101,14 @@ export default function InfoPage() {
                 marginBottom: "24px",
               }}
             >
-              Contacto
+              {contactIntro?.title || "Contacto"}
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)" }}>
-                Consultas generales, prensa y booking:
+                {contactIntro?.body || "Consultas generales, prensa y booking:"}
               </p>
               <a
-                href="mailto:contacto@delotrolado.club"
+                href={`mailto:${email}`}
                 className="hover:text-white transition-colors duration-300"
                 style={{
                   fontSize: "15px",
@@ -124,7 +118,7 @@ export default function InfoPage() {
                   textDecorationColor: "rgba(255,255,255,0.2)",
                 }}
               >
-                contacto@delotrolado.club
+                {email}
               </a>
             </div>
           </div>
@@ -143,7 +137,7 @@ export default function InfoPage() {
               Redes
             </h2>
             <a
-              href={siteConfig.links.instagram}
+              href={instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors duration-300"
@@ -171,12 +165,10 @@ export default function InfoPage() {
                 marginBottom: "24px",
               }}
             >
-              Ubicación
+              {location?.title || "Ubicación"}
             </h2>
             <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>
-              Valparaíso / Santiago
-              <br />
-              Chile
+              {location?.body || "Valparaíso / Santiago, Chile"}
             </p>
           </div>
 
@@ -196,7 +188,7 @@ export default function InfoPage() {
                 lineHeight: 2,
               }}
             >
-              No fotos · No flash · No teléfonos en pista
+              {ethos}
             </p>
           </div>
         </div>

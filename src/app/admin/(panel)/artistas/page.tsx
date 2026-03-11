@@ -131,7 +131,7 @@ export default async function AdminArtistasPage() {
                       style={{
                         fontSize: "0.6875rem",
                         color: "#555",
-                        fontFamily: "var(--font-geist-mono)",
+                        fontFamily: "var(--font-main)",
                       }}
                     >
                       /{artist.slug}

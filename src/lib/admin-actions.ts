@@ -42,6 +42,7 @@ export interface EventInput {
   tags?: string[];
   min_age?: number | null;
   is_featured?: boolean;
+  is_past?: boolean;
 }
 
 function validateEvent(data: EventInput): string | null {
@@ -78,6 +79,7 @@ export async function createEvent(data: EventInput): Promise<ActionResult> {
         tags: data.tags ?? [],
         min_age: data.min_age ?? null,
         is_featured: data.is_featured ?? false,
+        is_past: data.is_past ?? false,
       })
       .select("id")
       .single();
@@ -105,7 +107,7 @@ export async function updateEvent(
     const validationError = validateEvent(data);
     if (validationError) return { error: validationError };
 
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("events")
       .update({
         name: data.name.trim(),
@@ -123,12 +125,21 @@ export async function updateEvent(
         tags: data.tags ?? [],
         min_age: data.min_age ?? null,
         is_featured: data.is_featured ?? false,
+        is_past: data.is_past ?? false,
       })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id")
+      .single();
 
     if (error) {
+      console.error("updateEvent error:", error);
       if (error.code === "23505") return { error: "Ya existe un evento con ese slug" };
+      if (error.code === "PGRST116") return { error: "No se pudo actualizar — verificá permisos" };
       return { error: error.message };
+    }
+
+    if (!updated) {
+      return { error: "No se pudo actualizar el evento" };
     }
 
     revalidatePath("/admin/eventos");
@@ -232,7 +243,7 @@ export async function updateArtist(
     const validationError = validateArtist(data);
     if (validationError) return { error: validationError };
 
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("artists")
       .update({
         name: data.name.trim(),
@@ -249,11 +260,19 @@ export async function updateArtist(
         sort_order: data.sort_order ?? 0,
         is_visible: data.is_visible ?? true,
       })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id")
+      .single();
 
     if (error) {
+      console.error("updateArtist error:", error);
       if (error.code === "23505") return { error: "Ya existe un artista con ese slug" };
+      if (error.code === "PGRST116") return { error: "No se pudo actualizar — verificá permisos" };
       return { error: error.message };
+    }
+
+    if (!updated) {
+      return { error: "No se pudo actualizar el artista" };
     }
 
     revalidatePath("/admin/artistas");
@@ -331,7 +350,7 @@ export async function updateGalleryImage(
   try {
     const { supabase } = await requireAdmin();
 
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("gallery_images")
       .update({
         ...(data.event_id !== undefined && { event_id: data.event_id || null }),
@@ -344,9 +363,18 @@ export async function updateGalleryImage(
         ...(data.is_visible !== undefined && { is_visible: data.is_visible }),
         ...(data.sort_order !== undefined && { sort_order: data.sort_order }),
       })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id")
+      .single();
 
-    if (error) return { error: error.message };
+    if (error) {
+      console.error("updateGalleryImage error:", error);
+      return { error: error.message };
+    }
+
+    if (!updated) {
+      return { error: "No se pudo actualizar la imagen" };
+    }
 
     revalidatePath("/admin/galeria");
     revalidatePath("/galeria");
@@ -415,12 +443,21 @@ export async function updateSiteSettings(
 
     if (!existing) return { error: "No se encontró la configuración" };
 
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("site_settings")
       .update(data)
-      .eq("id", existing.id);
+      .eq("id", existing.id)
+      .select("id")
+      .single();
 
-    if (error) return { error: error.message };
+    if (error) {
+      console.error("updateSiteSettings error:", error);
+      return { error: error.message };
+    }
+
+    if (!updated) {
+      return { error: "No se pudo actualizar la configuración" };
+    }
 
     revalidatePath("/admin/configuracion");
     revalidatePath("/");
@@ -498,12 +535,21 @@ export async function updatePageContent(
     if (data.sort_order !== undefined) updateData.sort_order = data.sort_order;
     if (data.is_visible !== undefined) updateData.is_visible = data.is_visible;
 
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("page_content")
       .update(updateData)
-      .eq("id", id);
+      .eq("id", id)
+      .select("id")
+      .single();
 
-    if (error) return { error: error.message };
+    if (error) {
+      console.error("updatePageContent error:", error);
+      return { error: error.message };
+    }
+
+    if (!updated) {
+      return { error: "No se pudo actualizar el contenido" };
+    }
 
     revalidatePath("/admin/contenido");
     if (data.page_slug) revalidatePath(`/${data.page_slug}`);
@@ -595,7 +641,7 @@ export async function updateTicketType(
   try {
     const { supabase } = await requireAdmin();
 
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("ticket_types")
       .update({
         ...(data.name && { name: data.name.trim() }),
@@ -616,9 +662,18 @@ export async function updateTicketType(
         ...(data.is_active !== undefined && { is_active: data.is_active }),
         ...(data.sort_order !== undefined && { sort_order: data.sort_order }),
       })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id")
+      .single();
 
-    if (error) return { error: error.message };
+    if (error) {
+      console.error("updateTicketType error:", error);
+      return { error: error.message };
+    }
+
+    if (!updated) {
+      return { error: "No se pudo actualizar el tipo de entrada" };
+    }
 
     revalidatePath("/admin/eventos");
     return { success: true, id };
@@ -698,6 +753,157 @@ export async function removeFromLineup(id: string): Promise<ActionResult> {
     if (error) return { error: error.message };
 
     revalidatePath("/admin/eventos");
+    return { success: true };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Error desconocido" };
+  }
+}
+
+/* ════════════════════════════════════════════════
+   ORDERS (admin)
+   ════════════════════════════════════════════════ */
+
+export async function getOrders(filters?: { event_id?: string; status?: string }) {
+  const { supabase } = await requireAdmin();
+  let query = supabase
+    .from("orders")
+    .select("*, event:events(name, slug)")
+    .order("created_at", { ascending: false });
+
+  if (filters?.event_id) query = query.eq("event_id", filters.event_id);
+  if (filters?.status) query = query.eq("status", filters.status);
+
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((row: Record<string, unknown>) => ({
+    ...row,
+    event: Array.isArray(row.event) ? (row.event as Record<string, unknown>[])[0] : row.event,
+  }));
+}
+
+export async function getOrderTickets(orderId: string) {
+  const { supabase } = await requireAdmin();
+  const { data, error } = await supabase
+    .from("tickets")
+    .select("*, ticket_type:ticket_types(name)")
+    .eq("order_id", orderId);
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((row: Record<string, unknown>) => ({
+    ...row,
+    ticket_type: Array.isArray(row.ticket_type) ? (row.ticket_type as Record<string, unknown>[])[0] : row.ticket_type,
+  }));
+}
+
+export async function updateOrderStatus(
+  orderId: string,
+  status: string
+): Promise<ActionResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    if (!["pending", "approved", "rejected", "refunded"].includes(status)) {
+      return { error: "Estado inválido" };
+    }
+
+    const { error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", orderId);
+
+    if (error) return { error: error.message };
+
+    // If approving, update sold counts
+    if (status === "approved") {
+      const { data: tickets } = await supabase
+        .from("tickets")
+        .select("ticket_type_id")
+        .eq("order_id", orderId);
+
+      if (tickets) {
+        const counts: Record<string, number> = {};
+        for (const t of tickets) {
+          counts[t.ticket_type_id] = (counts[t.ticket_type_id] || 0) + 1;
+        }
+        for (const [typeId, qty] of Object.entries(counts)) {
+          const { data: tt } = await supabase
+            .from("ticket_types")
+            .select("sold")
+            .eq("id", typeId)
+            .single();
+          if (tt) {
+            await supabase
+              .from("ticket_types")
+              .update({ sold: tt.sold + qty })
+              .eq("id", typeId);
+          }
+        }
+      }
+    }
+
+    revalidatePath("/admin/ventas");
+    return { success: true };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Error desconocido" };
+  }
+}
+
+export async function validateTicketQR(qrCode: string): Promise<
+  | { success: true; ticket: { id: string; qr_code: string; is_used: boolean; used_at: string | null; order_name: string; order_email: string; event_name: string; ticket_type_name: string } }
+  | { error: string }
+> {
+  try {
+    const { supabase } = await requireAdmin();
+
+    const { data: ticket, error } = await supabase
+      .from("tickets")
+      .select(`
+        id, qr_code, is_used, used_at,
+        order:orders(name, email, event:events(name)),
+        ticket_type:ticket_types(name)
+      `)
+      .eq("qr_code", qrCode.trim().toUpperCase())
+      .single();
+
+    if (error || !ticket) {
+      return { error: "Código QR no encontrado" };
+    }
+
+    const order = Array.isArray(ticket.order) ? ticket.order[0] : ticket.order;
+    const tt = Array.isArray(ticket.ticket_type) ? ticket.ticket_type[0] : ticket.ticket_type;
+    const event = order?.event ? (Array.isArray(order.event) ? order.event[0] : order.event) : null;
+
+    return {
+      success: true,
+      ticket: {
+        id: ticket.id,
+        qr_code: ticket.qr_code,
+        is_used: ticket.is_used,
+        used_at: ticket.used_at,
+        order_name: order?.name ?? "—",
+        order_email: order?.email ?? "—",
+        event_name: event?.name ?? "—",
+        ticket_type_name: tt?.name ?? "—",
+      },
+    };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Error desconocido" };
+  }
+}
+
+export async function markTicketUsed(ticketId: string): Promise<ActionResult> {
+  try {
+    const { supabase } = await requireAdmin();
+
+    const { error } = await supabase
+      .from("tickets")
+      .update({ is_used: true, used_at: new Date().toISOString() })
+      .eq("id", ticketId);
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin/scanner");
     return { success: true };
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Error desconocido" };

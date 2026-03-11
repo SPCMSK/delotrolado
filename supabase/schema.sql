@@ -1,12 +1,7 @@
--- ============================================================
--- delotrolado.club — Database Schema (Complete CMS)
--- Run this in Supabase SQL Editor (supabase.com/dashboard)
--- ============================================================
 
--- ── Enable extensions ──
 create extension if not exists "uuid-ossp";
 
--- ── Auto-update updated_at trigger ──
+
 create or replace function update_updated_at()
 returns trigger as $$
 begin
@@ -16,9 +11,7 @@ end;
 $$ language plpgsql;
 
 
--- ============================================================
--- 0. ADMIN USERS (links to Supabase Auth)
--- ============================================================
+
 create table if not exists admin_users (
   id            uuid primary key references auth.users(id) on delete cascade,
   email         text not null,
@@ -27,7 +20,7 @@ create table if not exists admin_users (
   created_at    timestamptz not null default now()
 );
 
--- Helper: is the current user an admin?
+
 create or replace function is_admin()
 returns boolean as $$
 begin
@@ -38,9 +31,7 @@ end;
 $$ language plpgsql security definer;
 
 
--- ============================================================
--- 1. SITE SETTINGS (single-row global config)
--- ============================================================
+
 create table if not exists site_settings (
   id                uuid primary key default uuid_generate_v4(),
   site_name         text not null default 'delotrolado',
@@ -69,9 +60,7 @@ create trigger trg_site_settings_updated
   for each row execute function update_updated_at();
 
 
--- ============================================================
--- 2. PAGE CONTENT (editable text blocks for any page)
--- ============================================================
+
 create table if not exists page_content (
   id          uuid primary key default uuid_generate_v4(),
   page_slug   text not null,
@@ -90,9 +79,7 @@ create trigger trg_page_content_updated
   for each row execute function update_updated_at();
 
 
--- ============================================================
--- 3. ARTISTS
--- ============================================================
+
 create table if not exists artists (
   id              uuid primary key default uuid_generate_v4(),
   slug            text unique not null,
@@ -117,9 +104,6 @@ create trigger trg_artists_updated
   for each row execute function update_updated_at();
 
 
--- ============================================================
--- 4. EVENTS
--- ============================================================
 create table if not exists events (
   id          uuid primary key default uuid_generate_v4(),
   slug        text unique not null,
@@ -137,6 +121,7 @@ create table if not exists events (
   tags        text[] default '{}',
   min_age     int,
   is_featured boolean not null default false,
+  is_past     boolean not null default false,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -146,9 +131,7 @@ create trigger trg_events_updated
   for each row execute function update_updated_at();
 
 
--- ============================================================
--- 5. EVENT_ARTISTS (many-to-many: lineup)
--- ============================================================
+
 create table if not exists event_artists (
   id            uuid primary key default uuid_generate_v4(),
   event_id      uuid not null references events(id) on delete cascade,
@@ -162,9 +145,7 @@ create table if not exists event_artists (
 );
 
 
--- ============================================================
--- 6. TICKET_TYPES
--- ============================================================
+
 create table if not exists ticket_types (
   id            uuid primary key default uuid_generate_v4(),
   event_id      uuid not null references events(id) on delete cascade,
@@ -182,9 +163,7 @@ create table if not exists ticket_types (
 );
 
 
--- ============================================================
--- 7. ORDERS
--- ============================================================
+
 create table if not exists orders (
   id                uuid primary key default uuid_generate_v4(),
   event_id          uuid not null references events(id) on delete restrict,
@@ -205,9 +184,7 @@ create trigger trg_orders_updated
   for each row execute function update_updated_at();
 
 
--- ============================================================
--- 8. TICKETS (one per entry, with QR code)
--- ============================================================
+
 create table if not exists tickets (
   id              uuid primary key default uuid_generate_v4(),
   order_id        uuid not null references orders(id) on delete cascade,
@@ -219,9 +196,7 @@ create table if not exists tickets (
 );
 
 
--- ============================================================
--- 9. GALLERY_IMAGES
--- ============================================================
+
 create table if not exists gallery_images (
   id            uuid primary key default uuid_generate_v4(),
   event_id      uuid references events(id) on delete set null,
@@ -235,9 +210,6 @@ create table if not exists gallery_images (
 );
 
 
--- ============================================================
--- INDEXES
--- ============================================================
 create index if not exists idx_events_status_date on events(status, date desc);
 create index if not exists idx_events_slug on events(slug);
 create index if not exists idx_events_featured on events(is_featured) where is_featured = true;
@@ -254,11 +226,6 @@ create index if not exists idx_gallery_visible on gallery_images(is_visible) whe
 create index if not exists idx_page_content_page on page_content(page_slug);
 
 
--- ============================================================
--- ROW LEVEL SECURITY (RLS)
--- ============================================================
-
--- Enable RLS on all tables
 alter table admin_users enable row level security;
 alter table site_settings enable row level security;
 alter table page_content enable row level security;
@@ -270,7 +237,6 @@ alter table orders enable row level security;
 alter table tickets enable row level security;
 alter table gallery_images enable row level security;
 
--- ── PUBLIC READ POLICIES (anon + authenticated) ──
 
 create policy "Public can read site settings"
   on site_settings for select using (true);
@@ -298,9 +264,7 @@ create policy "Public can read active ticket types"
 create policy "Public can read visible gallery images"
   on gallery_images for select using (is_visible = true);
 
--- ── ADMIN WRITE POLICIES (full CRUD for admins) ──
 
--- Admin users: only super_admin can manage other admins
 create policy "Admins can read admin_users"
   on admin_users for select using (is_admin());
 
@@ -311,15 +275,15 @@ create policy "Super admins can manage admin_users"
     exists (select 1 from admin_users where id = auth.uid() and role = 'super_admin')
   );
 
--- Site settings: admins can update
+
 create policy "Admins can update site settings"
   on site_settings for update using (is_admin()) with check (is_admin());
 
--- Page content: admins have full CRUD
+
 create policy "Admins can manage page content"
   on page_content for all using (is_admin()) with check (is_admin());
 
--- Artists: admins have full CRUD + can read ALL (including hidden)
+
 create policy "Admins can read all artists"
   on artists for select using (is_admin());
 
@@ -332,7 +296,7 @@ create policy "Admins can update artists"
 create policy "Admins can delete artists"
   on artists for delete using (is_admin());
 
--- Events: admins have full CRUD + can read ALL (including drafts)
+
 create policy "Admins can read all events"
   on events for select using (is_admin());
 
@@ -345,15 +309,15 @@ create policy "Admins can update events"
 create policy "Admins can delete events"
   on events for delete using (is_admin());
 
--- Event artists: admins have full CRUD
+
 create policy "Admins can manage event artists"
   on event_artists for all using (is_admin()) with check (is_admin());
 
--- Ticket types: admins have full CRUD
+
 create policy "Admins can manage ticket types"
   on ticket_types for all using (is_admin()) with check (is_admin());
 
--- Gallery: admins have full CRUD + can read ALL (including hidden)
+
 create policy "Admins can read all gallery images"
   on gallery_images for select using (is_admin());
 
@@ -366,14 +330,14 @@ create policy "Admins can update gallery images"
 create policy "Admins can delete gallery images"
   on gallery_images for delete using (is_admin());
 
--- Orders: admins can read and update all orders
+
 create policy "Admins can read all orders"
   on orders for select using (is_admin());
 
 create policy "Admins can update orders"
   on orders for update using (is_admin()) with check (is_admin());
 
--- Tickets: admins can read and update all tickets
+
 create policy "Admins can read all tickets"
   on tickets for select using (is_admin());
 
@@ -383,9 +347,6 @@ create policy "Admins can update tickets"
 
 
 
--- ============================================================
--- STORAGE BUCKETS (for images)
--- ============================================================
 insert into storage.buckets (id, name, public) values ('flyers', 'flyers', true);
 insert into storage.buckets (id, name, public) values ('artists', 'artists', true);
 insert into storage.buckets (id, name, public) values ('gallery', 'gallery', true);

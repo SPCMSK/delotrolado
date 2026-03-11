@@ -299,7 +299,7 @@ export default function AdminContenidoPage() {
                     style={{
                       fontSize: "0.625rem",
                       color: "#555",
-                      fontFamily: "var(--font-geist-mono)",
+                      fontFamily: "var(--font-main)",
                       background: "#0a0a0a",
                       padding: "0.125rem 0.5rem",
                       borderRadius: "0.25rem",

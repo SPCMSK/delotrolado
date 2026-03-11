@@ -116,6 +116,7 @@ export interface EventRow {
   tags: string[];
   min_age: number | null;
   is_featured: boolean;
+  is_past: boolean;
   created_at: string;
 }
 
@@ -146,6 +147,30 @@ export async function getPublishedEvents(): Promise<EventWithDate[]> {
     doorsOpen: fmtTime(e.doors_open),
     doorsClose: fmtTime(e.doors_close),
   }));
+}
+
+/** Split published events into upcoming and past using the is_past field */
+export async function getPublishedEventsSplit(): Promise<{
+  upcoming: EventWithDate[];
+  past: EventWithDate[];
+}> {
+  const all = await getPublishedEvents();
+
+  const upcoming: EventWithDate[] = [];
+  const past: EventWithDate[] = [];
+
+  for (const e of all) {
+    if (e.is_past) {
+      past.push(e);
+    } else {
+      upcoming.push(e);
+    }
+  }
+
+  // Past events: most recent first
+  past.reverse();
+
+  return { upcoming, past };
 }
 
 export async function getEventBySlug(slug: string): Promise<EventWithDate | null> {
@@ -386,4 +411,35 @@ export function ticketStatus(t: TicketTypeRow): string {
 export function formatDateLong(dateStr: string): string {
   const parts = parseDateParts(dateStr);
   return `${parts.day} ${parts.month} ${parts.year}`;
+}
+
+/* ════════════════════════════════════════════════
+   ORDERS (admin)
+   ════════════════════════════════════════════════ */
+
+export interface OrderRow {
+  id: string;
+  event_id: string;
+  email: string;
+  name: string;
+  phone: string | null;
+  status: string;
+  total: number;
+  mp_preference_id: string | null;
+  mp_payment_id: string | null;
+  idempotency_key: string;
+  created_at: string;
+  updated_at: string;
+  event?: { name: string; slug: string } | null;
+}
+
+export interface TicketRow {
+  id: string;
+  order_id: string;
+  ticket_type_id: string;
+  qr_code: string;
+  is_used: boolean;
+  used_at: string | null;
+  created_at: string;
+  ticket_type?: { name: string } | null;
 }

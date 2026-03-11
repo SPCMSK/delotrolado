@@ -38,17 +38,15 @@ export function Navbar() {
       <nav className="flex h-20 lg:h-24 w-full items-stretch">
         {/* Logo — same flex-1 as other links */}
         <Link href="/" className="relative z-50 flex items-center justify-center flex-1">
-          <div className="relative w-[120px] md:w-[140px] lg:w-[160px] h-[48px] md:h-[56px] lg:h-[64px] overflow-hidden">
-            <div className="absolute inset-0 w-full h-[180%] -top-[40%]">
-              <Image
-                src="/logos/LOGO-BLANCO.png"
-                alt={siteConfig.name}
-                fill
-                className="object-contain object-center hover:opacity-80 transition-opacity"
-                priority
-              />
-            </div>
-          </div>
+          <Image
+            src="/LOGOS DOL SVG/2.svg"
+            alt={siteConfig.name}
+            width={500}
+            height={500}
+            className="hover:opacity-80 transition-opacity"
+            style={{ width: "200px", height: "200px" }}
+            priority
+          />
         </Link>
 
         {/* Nav links — each flex-1, filling navbar equally with logo */}

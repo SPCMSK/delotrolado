@@ -1,49 +1,53 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Source_Code_Pro } from "next/font/google";
+import { Source_Code_Pro } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { siteConfig } from "@/lib/config";
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
+import { getSiteSettings } from "@/lib/data";
 
 const sourceCodePro = Source_Code_Pro({
-  variable: "--font-geist-mono",
+  variable: "--font-main",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s — ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  metadataBase: new URL(siteConfig.url),
-  openGraph: {
-    title: siteConfig.name,
-    description: siteConfig.description,
-    url: siteConfig.url,
-    siteName: siteConfig.name,
-    images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
-    locale: "es_CL",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const siteName = settings?.site_name || siteConfig.name;
+  const siteDescription = settings?.site_description || siteConfig.description;
+
+  return {
+    title: {
+      default: siteName,
+      template: `%s — ${siteName}`,
+    },
+    description: siteDescription,
+    metadataBase: new URL(siteConfig.url),
+    icons: {
+      icon: "/favicon.svg",
+    },
+    openGraph: {
+      title: siteName,
+      description: siteDescription,
+      url: siteConfig.url,
+      siteName: siteName,
+      images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
+      locale: "es_CL",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description: siteDescription,
+      images: [siteConfig.ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -53,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${spaceGrotesk.variable} ${sourceCodePro.variable} antialiased`}
+        className={`${sourceCodePro.variable} antialiased`}
       >
         <Navbar />
         <main className="min-h-screen" style={{ paddingTop: '96px' }}>{children}</main>
